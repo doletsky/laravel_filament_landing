@@ -10,4 +10,4 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring intl bcmath gd xml dom zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www
+WORKDIR /home/atmosphere
