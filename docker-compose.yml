@@ -20,7 +20,9 @@ services:
       mysql_atmosphere:
         condition: service_healthy
     networks:
-      - nginx_network # Общая сеть с вашим Nginx
+      - app_network
+    ports:
+      - "9000:9000"
 
   mysql_atmosphere:
     image: mysql:8.0
@@ -37,12 +39,14 @@ services:
       interval: 5s
       retries: 10
     networks:
-      - nginx_network
+      - app_network
+    ports:
+      - "3306:3306"
 
 volumes:
   dbdata_atmosphere:
   vendor:
 
 networks:
-  nginx_network:
-    external: true # Предполагаем, что сеть создана заранее для Nginx
+  app_network:
+    driver: bridge
