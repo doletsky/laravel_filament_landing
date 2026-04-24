@@ -1,0 +1,44 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www
+      - vendor:/var/www/vendor
+    working_dir: /var/www
+    command: >
+      sh -c "
+      composer install &&
+      if [ ! -d 'app/Providers/Filament' ]; then
+        composer require filament/filament:^5.0 -W --no-audit --ignore-platform-req=php+ &&
+        php artisan filament:install --panels --quiet;
+      fi &&
+      php artisan key:generate &&
+      php artisan migrate --force &&
+      php artisan serve --host=0.0.0.0 --port=8000
+      "
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  dbdata:
+  vendor:
