@@ -1,6 +1,8 @@
 services:
-  app_atmosphere:
+  app:
     build: .
+    ports:
+      - "8000:8000"
     volumes:
       - .:/var/www
       - vendor:/var/www/vendor
@@ -14,15 +16,13 @@ services:
       fi &&
       php artisan key:generate &&
       php artisan migrate --force &&
-      php-fpm
+      php artisan serve --host=0.0.0.0 --port=8000
       "
     depends_on:
-      mysql_atmosphere:
+      mysql:
         condition: service_healthy
-    networks:
-      - nginx_network # Общая сеть с вашим Nginx
 
-  mysql_atmosphere:
+  mysql:
     image: mysql:8.0
     restart: always
     environment:
@@ -30,19 +30,15 @@ services:
       MYSQL_DATABASE: laravel
       MYSQL_USER: laravel
       MYSQL_PASSWORD: laravel
+    ports:
+      - "3306:3306"
     volumes:
-      - dbdata_atmosphere:/var/lib/mysql
+      - dbdata:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       retries: 10
-    networks:
-      - nginx_network
 
 volumes:
-  dbdata_atmosphere:
+  dbdata:
   vendor:
-
-networks:
-  nginx_network:
-    external: true # Предполагаем, что сеть создана заранее для Nginx
