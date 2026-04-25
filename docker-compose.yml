@@ -1,3 +1,10 @@
+networks:
+  app_network:
+    driver: bridge
+  home_default:
+    name: home_default
+    external: true
+
 services:
   app_atmosphere:
     build: .
@@ -21,6 +28,7 @@ services:
         condition: service_healthy
     networks:
       - app_network
+      - home_default
     ports:
       - "9000:9000"
 
@@ -40,13 +48,10 @@ services:
       retries: 10
     networks:
       - app_network
+      - home_default
     ports:
       - "3306:3306"
 
 volumes:
   dbdata_atmosphere:
   vendor:
-
-networks:
-  app_network:
-    driver: bridge
