@@ -27,8 +27,10 @@ services:
       mysql_atmosphere:
         condition: service_healthy
     networks:
-      - app_network
-      - home_default
+      app_network:
+      home_default:
+        aliases:
+          - app_atmosphere
     ports:
       - "9000:9000"
 
@@ -48,7 +50,6 @@ services:
       retries: 10
     networks:
       - app_network
-      - home_default
     ports:
       - "3306:3306"
 
