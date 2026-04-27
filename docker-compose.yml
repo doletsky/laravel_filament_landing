@@ -21,6 +21,10 @@ services:
       fi &&
       php artisan key:generate &&
       php artisan migrate --force &&
+      chown -R www-data:www-data /home/atmosphere/storage &&
+      chown -R www-data:www-data /home/atmosphere/bootstrap/cache &&
+      chmod -R 775 /home/atmosphere/storage &&
+      chmod -R 775 /home/atmosphere/bootstrap/cache &&
       php-fpm
       "
     depends_on:
